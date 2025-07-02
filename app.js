@@ -92,6 +92,10 @@ app.use("/listings", listingRouter);
 app.use("/listings/:id/reviews", reviewRouter);
 app.use("/", userRouter);
 
+app.get("/", (req,res) => {
+    res.redirect("/listings");
+})
+
 app.listen(port, () => {
   console.log("app is listening on port 8080");
 });
