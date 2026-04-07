@@ -3,11 +3,11 @@ const fetch = require("node-fetch");
 
 module.exports.index = async (req,res) => { //index route
     const allListings = await Listing.find({});
-    res.render("listings/index.ejs", {allListings});
+    return res.render("listings/index.ejs", {allListings});
 }
 
 module.exports.renderNewListingForm = (req,res) => { // new route
-    res.render("listings/new.ejs");
+    return res.render("listings/new.ejs");
 }
 
 module.exports.createNewListing = async (req,res) => { //new listing
@@ -54,7 +54,7 @@ module.exports.showListings = async (req,res) => { //show route
         return res.redirect("/listings");
     }
     //console.log(listing.owner);
-    res.render("listings/show.ejs", {listing});
+    return res.render("listings/show.ejs", {listing});
 }
 
 module.exports.editListingForm = async (req,res) => { //Edit route
@@ -67,7 +67,7 @@ module.exports.editListingForm = async (req,res) => { //Edit route
     let originalImageUrl = listing.image.url;
     originalImageUrl = originalImageUrl.replace("/upload", "/upload/w_150,h_120");
 
-    res.render("listings/edit.ejs", {listing, originalImageUrl});
+    return res.render("listings/edit.ejs", {listing, originalImageUrl});
 }
 
 module.exports.updateListing = async (req,res) => { // Update route
