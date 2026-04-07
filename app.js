@@ -50,8 +50,19 @@ async function main() {
   });
 }
 
+// const store = MongoStore.create({
+//   mongoUrl: MONGO_URL,
+//   dbName: "wanderlust",
+//   crypto: {
+//     secret: process.env.SECRET,
+//   },
+//   touchAfter: 24 * 3600,
+// });
+
+app.set("trust proxy", 1); // trust first proxy
+
 const store = MongoStore.create({
-  mongoUrl: MONGO_URL,
+  clientPromise: mongoose.connection.asPromise().then(conn => conn.getClient()), // Use the existing Mongoose connection or create a new one if not available
   dbName: "wanderlust",
   crypto: {
     secret: process.env.SECRET,
