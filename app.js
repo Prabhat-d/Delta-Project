@@ -93,6 +93,23 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use((req, res, next) => {
+  const originalRender = res.render;
+  const originalRedirect = res.redirect;
+
+  res.render = function (...args) { // Log the method and URL for every render call
+    console.log("🔥 render called:", req.method, req.url);
+    return originalRender.apply(this, args);
+  };
+
+  res.redirect = function (...args) { // Log the method and URL for every redirect call
+    console.log("🔥 redirect called:", req.method, req.url);
+    return originalRedirect.apply(this, args);
+  };
+
+  next();
+});
+
 app.use("/listings", listingRouter);
 app.use("/listings/:id/reviews", reviewRouter);
 app.use("/", userRouter);
@@ -109,7 +126,17 @@ app.all("*", (req, res, next) => {
   next(new ExpressError(404, "Page Not Found :("));
 });
 
+// app.use((err, req, res, next) => {
+//   let { statusCode = 500, message = "Something Went Wrong" } = err;
+
+//   res.status(statusCode).render("error.ejs", { message });
+// });
+
 app.use((err, req, res, next) => {
+  if (res.headersSent) {
+    return next(err);   // 🔥 VERY IMPORTANT
+  }
+
   let { statusCode = 500, message = "Something Went Wrong" } = err;
 
   res.status(statusCode).render("error.ejs", { message });
