@@ -63,7 +63,7 @@ const sessionOptions = {
   store,
   secret: process.env.SECRET,
   resave: false,
-  saveUninitialized: true,
+  saveUninitialized: false,
   cookie: {
     expires: Date.now() + 7 * 24 * 60 * 60 * 1000,
     maxAge: 7 * 24 * 60 * 60 * 1000,
@@ -100,7 +100,7 @@ app.listen(port, () => {
   console.log("app is listening on port 8080");
 });
 
-app.all("*", (req, res, next) => {
+app.all("*", (req, res, next) => { 
   next(new ExpressError(404, "Page Not Found :("));
 });
 
