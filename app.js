@@ -28,12 +28,14 @@ app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride("_method"));
 app.engine("ejs", ejsMate);
 
-app.set("views engine", "ejs");
+app.set("views engine", "ejs");//view engine or views engine? ...
 app.set("views", path.join(__dirname, "views"));
 app.use(express.static(path.join(__dirname, "public")));
 
 const MONGO_URL =
   process.env.ATLASDB_URL || "mongodb://127.0.0.1:27017/wanderlust";
+
+console.log("MONGO_URL:", MONGO_URL);
 
 main()
   .then(() => {
@@ -43,10 +45,53 @@ main()
     console.log(e);
   });
 
+// async function main() {
+//   await mongoose.connect(MONGO_URL, {
+//     useNewUrlParser: true,
+//     useUnifiedTopology: true,
+//   });
+// }
 async function main() {
   await mongoose.connect(MONGO_URL, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
+  });
+
+  console.log("connection success");
+
+  // 🔥 Create store AFTER connection
+  const store = MongoStore.create({
+    mongoUrl: MONGO_URL,
+    crypto: {
+      secret: process.env.SECRET,
+    },
+  });
+
+  store.on("error", (e) => {
+    console.log("SESSION STORE ERROR", e);
+  });
+
+  app.set("trust proxy", 1);
+
+  app.use(session({
+    store: store,
+    secret: process.env.SECRET,
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      secure: false,
+      httpOnly: true,
+    },
+  }));
+
+  app.use(flash());
+
+  app.use(passport.initialize());
+  app.use(passport.session());
+
+  // 🔥 START SERVER ONLY AFTER EVERYTHING READY
+  app.listen(port, () => {
+    console.log("app is listening on port 8080");
   });
 }
 
@@ -59,43 +104,43 @@ async function main() {
 //   touchAfter: 24 * 3600,
 // });
 
-app.set("trust proxy", 1); // trust first proxy
+//app.set("trust proxy", 1); // trust first proxy
 
-const store = MongoStore.create({
-  clientPromise: mongoose.connection.asPromise().then(conn => conn.getClient()), // Use the existing Mongoose connection or create a new one if not available
-  dbName: "wanderlust",
-  crypto: {
-    secret: process.env.SECRET,
-  },
-  touchAfter: 24 * 3600,
-});
+// const store = MongoStore.create({
+//   clientPromise: mongoose.connection.asPromise().then(conn => conn.getClient()), // Use the existing Mongoose connection or create a new one if not available
+//   dbName: "wanderlust",
+//   crypto: {
+//     secret: process.env.SECRET,
+//   },
+//   touchAfter: 24 * 3600,
+// });
 
-store.on("error", function (e) {
-  console.log("SESSION STORE ERROR", e);
-});
+// store.on("error", function (e) {
+//   console.log("SESSION STORE ERROR", e);
+// });
 
-const sessionOptions = {
-  store: store,
-  secret: process.env.SECRET,
-  resave: false,
-  saveUninitialized: false,
-  cookie: {
-    expires: Date.now() + 7 * 24 * 60 * 60 * 1000,
-    maxAge: 7 * 24 * 60 * 60 * 1000,
-    httpOnly: true,
-    secure: false, // set to true if using https  
-  },
-};
+// const sessionOptions = {
+//   store: store,
+//   secret: process.env.SECRET,
+//   resave: false,
+//   saveUninitialized: false,
+//   cookie: {
+//     expires: Date.now() + 7 * 24 * 60 * 60 * 1000,
+//     maxAge: 7 * 24 * 60 * 60 * 1000,
+//     httpOnly: true,
+//     secure: false, // set to true if using https  
+//   },
+// };
 
-app.use(session(sessionOptions));
-app.use(flash());
+// //app.use(session(sessionOptions));
+// app.use(flash());
 
-app.use(passport.initialize());
-app.use(passport.session());
-passport.use(new LocalStrategy(User.authenticate()));
+// app.use(passport.initialize());
+// app.use(passport.session());
+// passport.use(new LocalStrategy(User.authenticate()));
 
-passport.serializeUser(User.serializeUser());
-passport.deserializeUser(User.deserializeUser());
+// passport.serializeUser(User.serializeUser());
+// passport.deserializeUser(User.deserializeUser());
 
 app.use((req, res, next) => {
   res.locals.success = req.flash("success");
@@ -129,9 +174,9 @@ app.get("/", (req,res) => {
     res.redirect("/listings");
 })
 
-app.listen(port, () => {
-  console.log("app is listening on port 8080");
-});
+// app.listen(port, () => {
+//   console.log("app is listening on port 8080");
+// });
 
 app.all("*", (req, res, next) => { 
   next(new ExpressError(404, "Page Not Found :("));
