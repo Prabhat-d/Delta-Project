@@ -1,4 +1,4 @@
-<% layout("/layouts/boilerplate") %>
+
 
 <style>
   .search-btn {
@@ -43,7 +43,7 @@
 
         <div class="navbar-nav ms-auto">
           <a class="nav-link" href="/listings/new">Airbnb your home</a>
-          <% if(!currUser) { %> 
+          <% if(!currUser || currUser == undefined || currUser == null) { %> 
           <a class="nav-link" aria-current="page" href="/signup"><b>Sign Up</b></a>
           <a class="nav-link" href="/login"><b>Login</b></a>
           <% } %>

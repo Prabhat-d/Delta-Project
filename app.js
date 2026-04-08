@@ -89,6 +89,13 @@ async function main() {
   app.use(passport.initialize());
   app.use(passport.session());
 
+  app.use((req, res, next) => {
+  res.locals.success = req.flash("success");
+  res.locals.error = req.flash("error");
+  res.locals.currUser = req.user;
+  next();
+});
+
   // 🔥 START SERVER ONLY AFTER EVERYTHING READY
   app.listen(port, () => {
     console.log("app is listening on port 8080");
@@ -142,12 +149,12 @@ async function main() {
 // passport.serializeUser(User.serializeUser());
 // passport.deserializeUser(User.deserializeUser());
 
-app.use((req, res, next) => {
-  res.locals.success = req.flash("success");
-  res.locals.error = req.flash("error");
-  res.locals.currUser = req.user;
-  next();
-});
+// app.use((req, res, next) => {
+//   res.locals.success = req.flash("success");
+//   res.locals.error = req.flash("error");
+//   res.locals.currUser = req.user;
+//   next();
+// });
 
 app.use((req, res, next) => {
   const originalRender = res.render;
