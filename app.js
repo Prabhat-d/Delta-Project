@@ -28,7 +28,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride("_method"));
 app.engine("ejs", ejsMate);
 
-app.set("view engine", "ejs");//view engine or views engine? ...
+app.set("view engine", "ejs"); //view engine or views engine? ...
 app.set("views", path.join(__dirname, "views"));
 app.use(express.static(path.join(__dirname, "public")));
 
@@ -73,32 +73,59 @@ async function main() {
 
   app.set("trust proxy", 1);
 
-  app.use(session({
-    store: store,
-    secret: process.env.SECRET,
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-      secure: false,
-      httpOnly: true,
-    },
-  }));
+  app.use(
+    session({
+      store: store,
+      secret: process.env.SECRET,
+      resave: false,
+      saveUninitialized: false,
+      cookie: {
+        secure: false,
+        httpOnly: true,
+      },
+    }),
+  );
 
   app.use(flash());
 
   app.use(passport.initialize());
   app.use(passport.session());
 
+  passport.use(new LocalStrategy(User.authenticate()));
+  passport.serializeUser(User.serializeUser());
+  passport.deserializeUser(User.deserializeUser());
+
   app.use((req, res, next) => {
-  res.locals.success = req.flash("success");
-  res.locals.error = req.flash("error");
-  res.locals.currUser = req.user;
-  next();
-});
+    res.locals.success = req.flash("success") || [];
+    res.locals.error = req.flash("error") || [];
+    res.locals.currUser = req.user || null;
+    next();
+  });
+
+  app.use("/listings", listingRouter);
+  app.use("/listings/:id/reviews", reviewRouter);
+  app.use("/", userRouter);
+
+  app.get("/", (req, res) => {
+    res.redirect("/listings");
+  });
 
   // 🔥 START SERVER ONLY AFTER EVERYTHING READY
   app.listen(port, () => {
     console.log("app is listening on port 8080");
+  });
+
+  app.all("*", (req, res, next) => {
+    next(new ExpressError(404, "Page Not Found :("));
+  });
+  app.use((err, req, res, next) => {
+    if (res.headersSent) {
+      return next(err); // 🔥 VERY IMPORTANT
+    }
+
+    let { statusCode = 500, message = "Something Went Wrong" } = err;
+
+    res.status(statusCode).render("error.ejs", { message });
   });
 }
 
@@ -135,7 +162,7 @@ async function main() {
 //     expires: Date.now() + 7 * 24 * 60 * 60 * 1000,
 //     maxAge: 7 * 24 * 60 * 60 * 1000,
 //     httpOnly: true,
-//     secure: false, // set to true if using https  
+//     secure: false, // set to true if using https
 //   },
 // };
 
@@ -156,38 +183,40 @@ async function main() {
 //   next();
 // });
 
-app.use((req, res, next) => {
-  const originalRender = res.render;
-  const originalRedirect = res.redirect;
+// app.use((req, res, next) => {
+//   const originalRender = res.render;
+//   const originalRedirect = res.redirect;
 
-  res.render = function (...args) { // Log the method and URL for every render call
-    console.log("🔥 render called:", req.method, req.url);
-    return originalRender.apply(this, args);
-  };
+//   res.render = function (...args) {
+//     // Log the method and URL for every render call
+//     console.log("🔥 render called:", req.method, req.url);
+//     return originalRender.apply(this, args);
+//   };
 
-  res.redirect = function (...args) { // Log the method and URL for every redirect call
-    console.log("🔥 redirect called:", req.method, req.url);
-    return originalRedirect.apply(this, args);
-  };
+//   res.redirect = function (...args) {
+//     // Log the method and URL for every redirect call
+//     console.log("🔥 redirect called:", req.method, req.url);
+//     return originalRedirect.apply(this, args);
+//   };
 
-  next();
-});
+//   next();
+// });
 
-app.use("/listings", listingRouter);
-app.use("/listings/:id/reviews", reviewRouter);
-app.use("/", userRouter);
+// app.use("/listings", listingRouter);
+// app.use("/listings/:id/reviews", reviewRouter);
+// app.use("/", userRouter);
 
-app.get("/", (req,res) => {
-    res.redirect("/listings");
-})
+// app.get("/", (req, res) => {
+//   res.redirect("/listings");
+// });
 
 // app.listen(port, () => {
 //   console.log("app is listening on port 8080");
 // });
 
-app.all("*", (req, res, next) => { 
-  next(new ExpressError(404, "Page Not Found :("));
-});
+// app.all("*", (req, res, next) => {
+//   next(new ExpressError(404, "Page Not Found :("));
+// });
 
 // app.use((err, req, res, next) => {
 //   let { statusCode = 500, message = "Something Went Wrong" } = err;
@@ -195,12 +224,12 @@ app.all("*", (req, res, next) => {
 //   res.status(statusCode).render("error.ejs", { message });
 // });
 
-app.use((err, req, res, next) => {
-  if (res.headersSent) {
-    return next(err);   // 🔥 VERY IMPORTANT
-  }
+// app.use((err, req, res, next) => {
+//   if (res.headersSent) {
+//     return next(err); // 🔥 VERY IMPORTANT
+//   }
 
-  let { statusCode = 500, message = "Something Went Wrong" } = err;
+//   let { statusCode = 500, message = "Something Went Wrong" } = err;
 
-  res.status(statusCode).render("error.ejs", { message });
-});
+//   res.status(statusCode).render("error.ejs", { message });
+// });
