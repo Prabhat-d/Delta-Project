@@ -11,7 +11,7 @@ const methodOverride = require("method-override");
 const ejsMate = require("ejs-mate");
 const ExpressError = require("./utils/expressError.js");
 const session = require("express-session");
-const MongoStore = require("connect-mongo");
+//const MongoStore = require("connect-mongo");
 const flash = require("connect-flash");
 const passport = require("passport");
 const LocalStrategy = require("passport-local");
@@ -60,22 +60,22 @@ async function main() {
   console.log("connection success");
 
   // 🔥 Create store AFTER connection
-  const store = MongoStore.create({
-    mongoUrl: MONGO_URL,
-    crypto: {
-      secret: process.env.SECRET,
-    },
-  });
+  // const store = MongoStore.create({
+  //   mongoUrl: MONGO_URL,
+  //   crypto: {
+  //     secret: process.env.SECRET,
+  //   },
+  // });
 
-  store.on("error", (e) => {
-    console.log("SESSION STORE ERROR", e);
-  });
+  // store.on("error", (e) => {
+  //   console.log("SESSION STORE ERROR", e);
+  // });
 
   app.set("trust proxy", 1);
 
   app.use(
     session({
-      store: store,
+      // store: store,
       secret: process.env.SECRET,
       resave: false,
       saveUninitialized: false,
