@@ -1,21 +1,47 @@
-const mapEl = document.getElementById('map');
-const coordinates = mapEl.dataset.coordinates.split(',').map(Number);
-const title = mapEl.dataset.title;
-
-let map = L.map('map').setView([28.6139, 77.2090], 13);
-L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+if (typeof coordinates !== "undefined" && coordinates[0] && coordinates[1]) {
+  let map = L.map("map").setView([28.6139, 77.209], 13);
+  L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
     maxZoom: 19,
-    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-    }).addTo(map);
+    attribution:
+      '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+  }).addTo(map);
 
-L.marker([coordinates[1], coordinates[0]])
+  L.marker([coordinates[1], coordinates[0]])
     .addTo(map)
-    .bindPopup(`<h4>${title}</h4><p>Exact location will be provided after booking.</p>`)
+    .bindPopup(
+      `<h4>${title}</h4><p>Exact location will be provided after booking.</p>`,
+    )
     .openPopup();
 
+  L.circleMarker([coordinates[1], coordinates[0]], {
+    radius: 100,
+    color: "red",
+    fillColor: "red",
+    fillOpacity: 0.1,
+  }).addTo(map);
+}
+
+const mapEl = document.getElementById("map");
+const coordinates = mapEl.dataset.coordinates.split(",").map(Number);
+const title = mapEl.dataset.title;
+
+let map = L.map("map").setView([28.6139, 77.209], 13);
+L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+  maxZoom: 19,
+  attribution:
+    '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+}).addTo(map);
+
+L.marker([coordinates[1], coordinates[0]])
+  .addTo(map)
+  .bindPopup(
+    `<h4>${title}</h4><p>Exact location will be provided after booking.</p>`,
+  )
+  .openPopup();
+
 L.circleMarker([coordinates[1], coordinates[0]], {
-    radius : 100,
-    color : "red",
-    fillColor : "red",
-    fillOpacity : 0.1,
+  radius: 100,
+  color: "red",
+  fillColor: "red",
+  fillOpacity: 0.1,
 }).addTo(map);

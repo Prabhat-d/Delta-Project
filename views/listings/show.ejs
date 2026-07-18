@@ -145,12 +145,14 @@
         <% } %>
       </div>
 
+      <% if(listing.geometry && listing.geometry.coordinates && listing.geometry.coordinates[0] && listing.geometry.coordinates[1]) { %>
       <div class="show-map-block">
         <h4>Where you'll be</h4>
         <div class="map-card">
           <div id="map"></div>
         </div>
       </div>
+      <% } %>
     </div>
 
     <div class="show-side-col">
