@@ -1,10 +1,12 @@
+const mapEl = document.getElementById('map');
+const coordinates = mapEl.dataset.coordinates.split(',').map(Number);
+const title = mapEl.dataset.title;
 
 let map = L.map('map').setView([28.6139, 77.2090], 13);
 L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 19,
     attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
     }).addTo(map);
-
 
 L.marker([coordinates[1], coordinates[0]])
     .addTo(map)

@@ -1,114 +1,166 @@
 <% layout("/layouts/boilerplate") %>
-<body>
-  <style>
-    #filters {
-      display : flex;
-      flex-wrap: wrap;
-      align-items: center;
-    }
 
-    .filter {
-      text-align: center;
-      margin-right: 2rem;
-      margin-top : 1rem;
-      opacity: 0.7;
-    }
 
-    .filter:hover {
-      opacity: 1;
-      cursor : pointer;
-    }
-
-    .filter p {
-      font-size : 0.8rem;
-    }
-
-    .tax-info {
-      display: none;
-    }
-
-    .tax-toggle {
-      border : 1px solid black;
-      border-radius: 1rem;
-      height : 3.25rem;
-      padding: 1rem;
-      display: flex;
-      align-items: center;
-      margin-left: 2rem;
-    }
-  </style>
-
-  <div id="filters">
-    <div class="filter">
-      <div><i class="fa-solid fa-fire"></i></div>
-      <p>Trending</p>
-    </div>
-    <div class="filter">
-      <div><i class="fa-solid fa-bed"></i></div>
-      <p>Rooms</p>
-    </div>
-    <div class="filter">
-      <div><i class="fa-solid fa-mountain-city"></i></div>
-      <p>Iconic cities</p>
-    </div>
-    <div class="filter">
-      <div><i class="fa-solid fa-mountain-sun"></i></div>
-      <p>Mountains</p>
-    </div>
-    <div class="filter">
-      <div><i class="fa-brands fa-fort-awesome"></i></div>
-      <p>Castles</p>
-    </div>
-    <div class="filter">
-      <div><i class="fa-solid fa-person-swimming"></i></div>
-      <p>Amazing Pools</p>
-    </div>
-    <div class="filter">
-      <div><i class="fa-solid fa-campground"></i></div>
-      <p>Camping</p>
-    </div>
-    <div class="filter">
-      <div><i class="fa-solid fa-cow"></i></div>
-      <p>Farms</p>
-    </div>
-    <div class="filter">
-      <div><i class="fa-solid fa-snowflake"></i></div>
-      <p>Arctic</p>
-    </div>
-    <div class="filter">
-      <div><i class="fa-solid fa-ship"></i></div>
-      <p>Boats</p>
-    </div>
-    <div class="filter">
-      <div><i class="fa-solid fa-igloo"></i></div>
-      <p>Domes</p>
-    </div>
-    <div class="tax-toggle">
-      <div class="form-check-reverse form-switch">
-        <input class="form-check-input" type="checkbox" role="switch" id="switchCheckDefault">
-        <label class="form-check-label" for="switchCheckDefault">Display total after taxes</label>
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-content">
+      <span class="hero-eyebrow"><i class="fa-solid fa-compass"></i> Find your next escape</span>
+      <h1>Stay somewhere unforgettable</h1>
+      <p>Handpicked homes, cabins and villas around the world — book direct, no middlemen.</p>
+      <div class="hero-cta-row">
+        <a href="#listings-grid" class="btn btn-primary-wl">Start exploring</a>
+        <a href="/listings/new" class="btn btn-outline-wl" style="background:rgba(255,255,255,0.12); color:white !important; border-color:rgba(255,255,255,0.5) !important;">Become a host</a>
       </div>
     </div>
-  </div>
+    <a href="#listings-grid" class="hero-scroll-cue" aria-label="Scroll down"><i class="fa-solid fa-chevron-down"></i></a>
+  </section>
 
-  <div class="row row-cols-lg-3 row-cols-md-2 row-cols-sm-1 mt-3">
-    <% for(let listing of allListings) { %> 
-      <a href="/listings/<%= listing._id %>" class="listing-link">
-      <div class="card listing-card" >
-          <img src="<%= listing.image.url %>" class="card-img-top" alt="listing-image" style="height: 20rem;">
-          <div class="card-img-overlay"></div>
-          <div class="card-body">
-            <p class="card-text">
-              <b><%= listing.title %></b> <br>
-              &#8360; <%= listing.price.toLocaleString("en-IN") %>
-              <i class="tax-info"> &nbsp; &nbsp; +18% GST </i>
-            </p>
-          </div>
+  <div class="container" id="listings-grid">
+    <div id="filters">
+      <div class="filter active"><i class="fa-solid fa-fire"></i><p>Trending</p></div>
+      <div class="filter"><i class="fa-solid fa-bed"></i><p>Rooms</p></div>
+      <div class="filter"><i class="fa-solid fa-mountain-city"></i><p>Iconic cities</p></div>
+      <div class="filter"><i class="fa-solid fa-mountain-sun"></i><p>Mountains</p></div>
+      <div class="filter"><i class="fa-brands fa-fort-awesome"></i><p>Castles</p></div>
+      <div class="filter"><i class="fa-solid fa-person-swimming"></i><p>Amazing Pools</p></div>
+      <div class="filter"><i class="fa-solid fa-campground"></i><p>Camping</p></div>
+      <div class="filter"><i class="fa-solid fa-cow"></i><p>Farms</p></div>
+      <div class="filter"><i class="fa-solid fa-snowflake"></i><p>Arctic</p></div>
+      <div class="filter"><i class="fa-solid fa-ship"></i><p>Boats</p></div>
+      <div class="filter"><i class="fa-solid fa-igloo"></i><p>Domes</p></div>
+      <div class="tax-toggle">
+        <div class="form-check-reverse form-switch">
+          <input class="form-check-input" type="checkbox" role="switch" id="switchCheckDefault">
+          <label class="form-check-label" for="switchCheckDefault">Display total after taxes</label>
         </div>
-      </a>
+      </div>
+    </div>
+
+    <% if(allListings.length > 0) { %>
+      <div class="listings-grid reveal-stagger">
+        <% for(let listing of allListings) { %>
+          <a href="/listings/<%= listing._id %>" class="listing-link stagger-item">
+            <div class="listing-card">
+              <div class="listing-img-wrap">
+                <img src="<%= listing.image.url %>" class="card-img-top" alt="<%= listing.title %>">
+                <button class="wishlist-btn" aria-label="Save to wishlist"><i class="fa-regular fa-heart"></i></button>
+              </div>
+              <div class="card-body">
+                <div class="listing-card-top-row">
+                  <span class="card-title-text"><%= listing.title %></span>
+                  <% if(typeof listing.reviews !== "undefined" && listing.reviews.length > 0) {
+                       let avg = listing.reviews.reduce((s,r)=>s+r.rating,0) / listing.reviews.length; %>
+                    <span class="card-rating"><i class="fa-solid fa-star"></i> <%= avg.toFixed(1) %></span>
+                  <% } %>
+                </div>
+                <p class="card-location"><%= listing.location %>, <%= listing.country %></p>
+                <% if(typeof listing.owner !== "undefined" && listing.owner) { %>
+                  <p class="card-host">Hosted by <%= listing.owner.username %></p>
+                <% } %>
+                <p class="card-price">
+                  <b>&#8360; <%= listing.price.toLocaleString("en-IN") %></b>
+                  <span class="per-night">/ night</span>
+                  <i class="tax-info"> &nbsp;+18% GST</i>
+                </p>
+              </div>
+            </div>
+          </a>
+        <% } %>
+      </div>
+    <% } else { %>
+      <div class="empty-state">
+        <i class="fa-regular fa-compass"></i>
+        <h3>No listings yet</h3>
+        <p>Be the first to share a place to stay with the Roamly community.</p>
+        <a href="/listings/new" class="btn btn-primary-wl">Create a listing</a>
+      </div>
     <% } %>
   </div>
-</body>
+
+  <section class="section section-gray reveal">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-eyebrow">Why Roamly</span>
+        <h2>Travel with total peace of mind</h2>
+        <p>Everything you need to book confidently, from verified hosts to secure payments.</p>
+      </div>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon"><i class="fa-solid fa-shield-halved"></i></div>
+          <h4>Verified hosts</h4>
+          <p>Every host is reviewed so you always know who you're booking with.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon"><i class="fa-solid fa-tags"></i></div>
+          <h4>Transparent pricing</h4>
+          <p>The price you see is the price you pay — no hidden surprises at checkout.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon"><i class="fa-solid fa-headset"></i></div>
+          <h4>24/7 support</h4>
+          <p>Our team is on hand around the clock if anything doesn't go to plan.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon"><i class="fa-solid fa-star"></i></div>
+          <h4>Real reviews</h4>
+          <p>Ratings come only from guests who actually stayed — no fake reviews.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section reveal">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-eyebrow">Testimonials</span>
+        <h2>Loved by travelers everywhere</h2>
+      </div>
+      <div class="testimonials-grid">
+        <div class="testimonial-card">
+          <div class="testimonial-stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+          <p class="testimonial-quote">Booking felt effortless and the place matched the photos exactly. Already planning my next trip.</p>
+          <div class="testimonial-author">
+            <div class="avatar-circle">A</div>
+            <div>
+              <p class="testimonial-author-name">Aditi R.</p>
+              <p class="testimonial-author-loc">Mumbai, India</p>
+            </div>
+          </div>
+        </div>
+        <div class="testimonial-card">
+          <div class="testimonial-stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+          <p class="testimonial-quote">The host communication was excellent and check-in was seamless. Highly recommend Roamly.</p>
+          <div class="testimonial-author">
+            <div class="avatar-circle">K</div>
+            <div>
+              <p class="testimonial-author-name">Karan S.</p>
+              <p class="testimonial-author-loc">Delhi, India</p>
+            </div>
+          </div>
+        </div>
+        <div class="testimonial-card">
+          <div class="testimonial-stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+          <p class="testimonial-quote">Best platform I've used for unique stays. Clean UI and easy to find exactly what I wanted.</p>
+          <div class="testimonial-author">
+            <div class="avatar-circle">M</div>
+            <div>
+              <p class="testimonial-author-name">Meera P.</p>
+              <p class="testimonial-author-loc">Bengaluru, India</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="container" style="padding-bottom: 4rem;">
+    <div class="cta-band reveal">
+      <h2>Have a place to share?</h2>
+      <p>List your home on Roamly and start welcoming guests from around the world.</p>
+      <a href="/listings/new" class="btn btn-primary-wl">Airbnb your home</a>
+    </div>
+  </div>
+
 
 <script>
   let taxSwitch = document.getElementById("switchCheckDefault");

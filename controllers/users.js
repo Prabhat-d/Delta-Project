@@ -4,32 +4,26 @@ module.exports.renderSignupForm = (req,res) => {
     return res.render("users/signup.ejs");
 }
 
-module.exports.createNewUser = (req, res, next) => {
+module.exports.createNewUser = async (req, res, next) => {
     try {
         let {username, email, password} = req.body;
-    let newUser = new User({
-        email : email,
-        username : username, 
-    });
+        let newUser = new User({ email, username });
 
-    User.register(newUser, password, (err, registeredUser) => {
-        if(err) {
-            console.log(err);
-            res.send(err.message);
-        } else {
-        console.log(registeredUser);
-
-        req.login(registeredUser, (err) => {
-            if(err) {
-                return next(err);
+        User.register(newUser, password, (err, registeredUser) => {
+            if (err) {
+                req.flash("error", err.message);
+                return res.redirect("/signup");
             }
-            req.flash("success", "Welcome to WanderLust");
-            return res.redirect("/listings");
-        })
-        
-        } });
-    } 
-    catch (e) {
+
+            req.login(registeredUser, (err) => {
+                if (err) {
+                    return next(err);
+                }
+                req.flash("success", `Welcome to Roamly, ${registeredUser.username}!`);
+                return res.redirect("/listings");
+            });
+        });
+    } catch (e) {
         req.flash("error", e.message);
         return res.redirect("/signup");
     }
@@ -40,7 +34,7 @@ module.exports.renderLoginForm = (req,res) => {
 }
 
 module.exports.loginUser = async (req,res) => {
-    req.flash("success", "Welcome to WanderLust");
+    req.flash("success", `Welcome back, ${req.user.username}!`);
     let redirectUrl = res.locals.redirectUrl || "/listings";
     res.redirect(redirectUrl);
 }

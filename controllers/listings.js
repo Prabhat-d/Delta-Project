@@ -19,7 +19,7 @@ module.exports.createNewListing = async (req,res) => { //new listing
     const geoUrl = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(location)}`
     const response = await fetch(geoUrl, {
         headers : {
-            "User-Agent" : "wanderlust/1.0(tiny@gmail.com)"
+            "User-Agent" : "roamly/1.0(tiny@gmail.com)"
         }
     });
     const data = await response.json();
