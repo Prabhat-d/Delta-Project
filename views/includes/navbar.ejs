@@ -1,36 +1,46 @@
 <nav class="navbar navbar-expand-lg sticky-top">
-  <div class="container-fluid" style="max-width:1360px; margin:0 auto;">
+  <div class="container-fluid" style="max-width:1360px; margin:0 auto; padding:0;">
     <a class="wl-brand" href="/listings">
       <i class="fa-regular fa-compass"></i> Roamly
     </a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup">
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-      <div class="wl-nav-links">
-        <a class="nav-link" href="/listings">Explore</a>
+      <div class="wl-nav-links me-auto my-2 my-lg-0">
+        <a class="nav-link" href="/listings">
+          <i class="fa-solid fa-compass d-lg-none me-2"></i> Explore
+        </a>
       </div>
 
-      <div class="navbar-nav ms-auto mx-lg-auto my-3 my-lg-0">
-        <form class="wl-search" role="search">
-          <i class="fa-solid fa-magnifying-glass" style="color:var(--color-gray-500); font-size:0.85rem;"></i>
-          <input class="search-input" type="search" placeholder="Search destinations" style="padding-left:0.6rem !important;">
+      <div class="navbar-nav mx-lg-auto my-2 my-lg-0 w-100-mobile">
+        <form class="wl-search" role="search" action="/listings" method="GET">
+          <i class="fa-solid fa-magnifying-glass search-icon"></i>
+          <input class="search-input" name="search" type="search" placeholder="Search destinations">
           <button class="search-btn" type="submit" aria-label="Search"><i class="fa-solid fa-magnifying-glass"></i><span>Search</span></button>
         </form>
       </div>
 
-      <div class="wl-nav-links ms-auto">
-        <a class="nav-link" href="/listings/new">Airbnb your home</a>
+      <div class="wl-nav-links ms-auto my-2 my-lg-0">
+        <a class="nav-link" href="/listings/new">
+          <i class="fa-solid fa-house-medical d-lg-none me-2"></i> Roamly your home
+        </a>
         <% if(typeof currUser === "undefined" || !currUser) { %>
-        <a class="nav-link nav-cta nav-signup" href="/signup">Sign Up</a>
-        <a class="nav-link nav-cta" href="/login">Login</a>
+          <a class="nav-link nav-cta nav-signup" href="/signup">
+            <i class="fa-solid fa-user-plus d-lg-none me-2"></i> Sign Up
+          </a>
+          <a class="nav-link nav-cta" href="/login">
+            <i class="fa-solid fa-right-to-bracket d-lg-none me-2"></i> Login
+          </a>
         <% } %>
         <% if(typeof currUser !== "undefined" && currUser) { %>
-        <div class="wl-user-chip">
-          <div class="avatar-circle avatar-sm"><%= currUser.username.charAt(0).toUpperCase() %></div>
-          <span><%= currUser.username %></span>
-        </div>
-        <a class="nav-link nav-cta" href="/logout">Log Out</a>
+          <div class="wl-user-chip">
+            <div class="avatar-circle avatar-sm"><%= currUser.username.charAt(0).toUpperCase() %></div>
+            <span><%= currUser.username %></span>
+          </div>
+          <a class="nav-link nav-cta" href="/logout">
+            <i class="fa-solid fa-right-from-bracket d-lg-none me-2"></i> Log Out
+          </a>
         <% } %>
       </div>
     </div>
